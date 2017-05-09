@@ -1,5 +1,7 @@
-var request = require('request');
-var fs = require('fs');
+const request = require('request');
+const fs = require('fs');
+const repoOwner = process.argv[2];
+const repoName = process.argv[3];
 
 console.log('Welcome to the GitHub Avatar Downloader!');
 
@@ -23,19 +25,18 @@ function getRepoContributors(repoOwner, repoName, cb) {
   const options = {
   url: requestURL,
   headers: {
-    'User-Agent': 'GitHub Avatar Downloader - Student Project',
-  }
+    'User-Agent': 'GitHub Avatar Downloader - Student Project'}
   };
 
   request(options, function(err, response, body) {
     if (!err) {
       let parsedBody = JSON.parse(body);
-      //console.log(parsedBody);
       parsedBody.forEach((avatar) => {
         let login = './avatars/' + avatar.login;
         let avatarURL = avatar.avatar_url;
         downloadImageByURL(avatarURL, login);
     })
+
     } else {
       console.log('error');
       return;
@@ -43,11 +44,7 @@ function getRepoContributors(repoOwner, repoName, cb) {
   })
 }
 
-
-// downloadImageByURL("https://avatars2.githubusercontent.com/u/2741?v=3&s=466",
-//   "./kvirani.jpg")
-
-getRepoContributors("jquery", "jquery", function(err, results){
+getRepoContributors(repoOwner, repoName, function(err, results){
   console.log('Errors:', err);
   console.log('Results:', results);
 });
