@@ -11,10 +11,10 @@ const GITHUB_TOKEN = '7147870fc9cc9e962392e12ef25d036266ee5f73'
 function downloadImageByURL(url, filePath) {
   request(url, function(err, res) {
     if (err) {
-      throw err;
+      console.log('error:', error);
       return;
     } else {
-      request(url).pipe(fs.createWriteStream(filePath))
+      request(url).pipe(fs.createWriteStream(filePath));
     }
   })
 }
@@ -29,22 +29,23 @@ function getRepoContributors(repoOwner, repoName, cb) {
   };
 
   request(options, function(err, response, body) {
-    if (!err) {
-      let parsedBody = JSON.parse(body);
-      parsedBody.forEach((avatar) => {
-        let login = './avatars/' + avatar.login;
-        let avatarURL = avatar.avatar_url;
-        downloadImageByURL(avatarURL, login);
-    })
-
+    if (err) {
+      throw err;
     } else {
-      console.log('error');
-      return;
+        let parsedBody = JSON.parse(body);
+        if (!parsedBody) {
+        } else {
+          parsedBody.forEach(function (avatar) {
+            let login = './avatars/' + avatar.login;
+            let avatarURL = avatar.avatar_url;
+            downloadImageByURL(avatarURL, login);
+        })
+      }
     }
   })
 }
 
 getRepoContributors(repoOwner, repoName, function(err, results){
-  console.log('Errors:', err);
-  console.log('Results:', results);
-});
+if (!repoOwner && !repoName) {
+  console.log("No URL found, please enter a repo Owner and User");
+}});
