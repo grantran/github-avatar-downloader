@@ -1,4 +1,5 @@
 var request = require('request');
+var fs = require('fs');
 
 console.log('Welcome to the GitHub Avatar Downloader!');
 
@@ -16,7 +17,6 @@ function getRepoContributors(repoOwner, repoName, cb) {
   }
   };
 
-
   request(options, function(err, response, body) {
     if (!err) {
       let parsedBody = JSON.parse(body);
@@ -28,12 +28,25 @@ function getRepoContributors(repoOwner, repoName, cb) {
       console.log('error');
       return;
     }
-
   })
 }
 
-getRepoContributors("jquery", "jquery", function(err, results){
-  console.log('Errors:', err);
-  console.log('Results:', results);
+function downloadImageByURL(url, filePath) {
+  request(url, function(err, res) {
+    if (err) {
+      throw err;
+      return;
+    } else {
+      request(url).pipe(fs.createWriteStream(filePath))
+    }
+  })
+}
 
-});
+// downloadImageByURL("https://avatars2.githubusercontent.com/u/2741?v=3&s=466",
+//   "./kvirani.jpg")
+
+// getRepoContributors("jquery", "jquery", function(err, results){
+//   console.log('Errors:', err);
+//   console.log('Results:', results);
+
+// });
