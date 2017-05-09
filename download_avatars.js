@@ -15,9 +15,9 @@ function downloadImageByURL(url, filePath) {
       return;
     } else {
       request(url).pipe(fs.createWriteStream(filePath));
-    }
-  })
-}
+      }
+    })
+  }
 function getRepoContributors(repoOwner, repoName, cb) {
   const requestURL = 'https://' + GITHUB_USER + ':' + GITHUB_TOKEN + '@api.github.com/repos/' +
   repoOwner + '/' + repoName + '/contributors';
@@ -29,23 +29,22 @@ function getRepoContributors(repoOwner, repoName, cb) {
   };
 
   request(options, function(err, response, body) {
-    if (err) {
-      throw err;
-    } else {
-        let parsedBody = JSON.parse(body);
-        if (!parsedBody) {
-        } else {
-          parsedBody.forEach(function (avatar) {
-            let login = './avatars/' + avatar.login;
-            let avatarURL = avatar.avatar_url;
-            downloadImageByURL(avatarURL, login);
-        })
-      }
+    if (err) throw err;
+    else {
+      cb(err, body);
     }
-  })
-}
+    })
+  }
 
 getRepoContributors(repoOwner, repoName, function(err, results){
-if (!repoOwner && !repoName) {
-  console.log("No URL found, please enter a repo Owner and User");
-}});
+  if (!repoOwner && !repoName) {
+    console.log("No URL found, please enter a repo Owner and User");
+  } else {
+      let parsedBody = JSON.parse(results);
+      parsedBody.forEach(function (avatar) {
+        let login = './avatars/' + avatar.login;
+        let avatarURL = avatar.avatar_url;
+        downloadImageByURL(avatarURL, login);
+      })
+    }
+  });
